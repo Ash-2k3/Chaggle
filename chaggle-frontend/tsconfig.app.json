@@ -10,5 +10,8 @@
   ],
   "include": [
     "src/**/*.d.ts"
-  ]
+  ],
+  "paths": {
+    "socket.io-client": ["node_modules/socket.io-client"]
+  }
 }
