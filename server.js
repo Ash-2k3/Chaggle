@@ -12,6 +12,18 @@ io.on('connection', (socket) => {
            socket.on('disconnect', () => {
                       console.log('User disconnected');
            });
+
+           socket.on('start-call', (data) => {
+                      console.log(`User ${socket.id} started a video call`)
+           })
+
+           socket.on('end-call', () => {
+                      console.log(`User ${socket.id} ended the video call`)
+           })
+
+           socket.on('skip-call', (data) => {
+                      console.log(`User ${socket.id} skipped the video call`)
+           })
 });
 
 
