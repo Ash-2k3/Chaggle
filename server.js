@@ -6,6 +6,15 @@ const app = express();
 const server = http.createServer(app); // Passed the express instance to the http server instance. Express application is then configured to use this server instance. This ensures that server handles both HTTP requests(handled by Express) and WebSocket Communication.
 const io = socketIo(server); // Integrating socket.io with the server
 
+io.on('connection', (socket) => {
+           console.log('A user has Connected');
+
+           socket.on('disconnect', () => {
+                      console.log('User disconnected');
+           });
+});
+
+
 const port = process.env.port || 4000;
 
 server.listen(port, () => {
