@@ -26,5 +26,15 @@ export class RtcService {
       };
     });
   }
+
+  public startChat(): void {
+    this.socket.emit('start-chat');
+    console.log('Chat has been started');
+  }
+
+  public endChat(): void {
+    this.socket.emit('end-chat');
+    console.log('Chat has been ended');
+  }
   
 }

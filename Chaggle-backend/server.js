@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
                                  (userId) => users[userId].status === 'available' && userId !== socket.id
                       );
                       if (availableUsers.length > 0) {
+                                 console.log('Haji aap ka connection hojayega')
                                  const partnerId = availableUsers[Math.floor(Math.random() * availableUsers.length)];
                                  // Update user statuses to 'in-chat'
                                  users[socket.id].status = 'in-chat';
@@ -46,7 +47,7 @@ io.on('connection', (socket) => {
                                  io.to(socket.id).emit('start-chat');
                                  io.to(partnerId).emit('start-chat');
                       } else {
-                                 // No available users.
+                                 console.log('Nahi bhai abhi koi nahi h online');
                       }
            });
 

@@ -1,25 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { Socket } from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
+import { RtcService } from './rtc.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+
+export class AppComponent {
   title = 'chaggle-frontend';
 
-  constructor(private socket: Socket) {}
-
-  ngOnInit(): void {
-
-  }
+  constructor(private rtcService: RtcService) {}
 
   startChat(): void {
-    this.socket.emit('start-chat');
+    this.rtcService.startChat();
   }
 
   endChat(): void {
-    this.socket.emit('end-chat');
+    this.rtcService.endChat();
   }
 }
