@@ -26,6 +26,10 @@ io.on('connection', (socket) => {
            socket.on('skip-call', (data) => {
                       console.log(`User ${socket.id} skipped the video call`)
            });
+
+           socket.on('new-message', (data) => {
+                      console.log(`Recieved message ${data}`)
+           });
 });
 
 app.use(express.static(path.join(__dirname, '../chaggle-frontend/dist/chaggle-frontend')));
