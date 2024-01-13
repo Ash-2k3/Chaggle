@@ -7,24 +7,58 @@ const app = express();
 const server = http.createServer(app); // Passed the express instance to the http server instance. Express application is then configured to use this server instance. This ensures that server handles both HTTP requests(handled by Express) and WebSocket Communication.
 const io = socketIo(server); // Integrating socket.io with the server
 
+const users = {};
+
 io.on('connection', (socket) => {
            console.log('A user has Connected');
 
+           users[socket.id] = { status: 'available' };
+
            socket.on('disconnect', () => {
                       console.log('User disconnected');
+                      if (users[socket.id].status === 'in-chat') {
+                                 // Notify the other user that the chat has ended
+                                 io.to(users[socket.id].chatPartner).emit('end-call');
+                                 users[socket.id].status = 'available';
+                                 users[users[socket.id].chatPartner].status = 'available';
+                      }
+                      delete users[socket.id];
            });
 
            socket.on('start-chat', (data) => {
                       console.log(`User ${socket.id} started a chat`);
-                      io.emit('start-chat');
+
+                      // Find an available user to start a chat
+                      const availableUsers = Object.keys(users).filter(
+                                 (userId) => users[userId].status === 'available' && userId !== socket.id
+                      );
+                      if (availableUsers.length > 0) {
+                                 const partnerId = availableUsers[Math.floor(Math.random() * availableUsers.length)];
+                                 // Update user statuses to 'in-chat'
+                                 users[socket.id].status = 'in-chat';
+                                 users[partnerId].status = 'in-chat';
+
+                                 // Store partner information
+                                 users[socket.id].chatPartner = partnerId;
+                                 users[partnerId].chatPartner = socket.id;
+
+                                 // Notify both users that the chat has started
+                                 io.to(socket.id).emit('start-chat');
+                                 io.to(partnerId).emit('start-chat');
+                      } else {
+                                 // No available users.
+                      }
            });
 
            socket.on('end-call', () => {
-                      console.log(`User ${socket.id} ended the video call`)
-           });
+                      console.log(`User ${socket.id} ended the video call`);
 
-           socket.on('skip-call', (data) => {
-                      console.log(`User ${socket.id} skipped the video call`)
+                      // Notify the other user that the chat has ended
+                      io.to(users[socket.id].chatPartner).emit('end-call');
+
+                      // Update user statuses to 'available'
+                      users[socket.id].status = 'available';
+                      users[users[socket.id].chatPartner].status = 'available';
            });
 
            socket.on('new-message', (data) => {
