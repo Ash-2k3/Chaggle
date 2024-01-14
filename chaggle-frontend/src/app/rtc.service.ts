@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {io, Socket} from 'socket.io-client';
-import { Observable } from 'rxjs';
+import { Observable, fromEvent } from 'rxjs';
+import { SocketRoomService } from './socket-room.service'
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,9 @@ import { Observable } from 'rxjs';
 export class RtcService {
   private socket: Socket;
 
-  constructor() {
+  constructor(
+    private socketRoomService: SocketRoomService
+  ) {
     this.socket = io('http://localhost:4000');
   }
 
@@ -29,12 +32,23 @@ export class RtcService {
 
   public startChat(): void {
     this.socket.emit('start-chat');
+    this.socketRoomService.setUserInChat();
+
+    this.listenForNoAvailableUserEvent().subscribe(() => {
+      console.log('No users are available to chat right now');
+      this.socketRoomService.setUserNotInChat();
+    });
     console.log('Chat has been started');
   }
 
   public endChat(): void {
     this.socket.emit('end-chat');
     console.log('Chat has been ended');
+  }
+
+  private listenForNoAvailableUserEvent() {
+    console.log('Yo I am here')
+    return fromEvent<any>(this.socket as any, 'no-available-users');
   }
   
 }

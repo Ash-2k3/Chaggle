@@ -47,7 +47,8 @@ io.on('connection', (socket) => {
                                  io.to(socket.id).emit('start-chat');
                                  io.to(partnerId).emit('start-chat');
                       } else {
-                                 console.log('Nahi bhai abhi koi nahi h online');
+                                 console.log('No users are available to chat at the moment');
+                                 io.to(socket.id).emit('no-available-users');
                       }
            });
 
