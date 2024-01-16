@@ -5,3 +5,15 @@ button.actionStart {
            color: antiquewhite;
            background-color: rgb(75, 47, 12);
 }
+
+.home-content {
+           align-items: center;
+           display: flex;
+           text-align: center;
+           justify-content: center;
+           height: inherit;
+}
+
+.app-container {
+           height: 100vh;
+}
