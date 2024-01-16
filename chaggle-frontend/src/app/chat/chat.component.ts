@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RtcService } from '../rtc.service';
 
 @Component({
-  selector: 'app-chat',
+  selector: 'chat-box',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })

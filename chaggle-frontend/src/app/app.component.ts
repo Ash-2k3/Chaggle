@@ -8,7 +8,8 @@ import { SocketRoomService } from './socket-room.service'
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit{
+  userInChat = false;
 
   constructor(
     private rtcService: RtcService,
@@ -20,5 +21,9 @@ export class AppComponent {
 
   endChat(): void {
     this.rtcService.endChat();
+  }
+
+  ngOnInit(): void {
+      this.userInChat = this.socketRoomService.isUserInChat();
   }
 }

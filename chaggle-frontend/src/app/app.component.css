@@ -1,3 +1,5 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
 button.actionStart {
            padding: 25px;
            color: antiquewhite;
