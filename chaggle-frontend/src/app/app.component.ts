@@ -15,10 +15,6 @@ export class AppComponent implements OnInit{
     private rtcService: RtcService,
     private socketRoomService: SocketRoomService) {}
 
-  startChat(): void {
-    this.rtcService.startChat();
-  }
-
   endChat(): void {
     this.rtcService.endChat();
   }

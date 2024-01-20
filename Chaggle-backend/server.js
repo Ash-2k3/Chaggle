@@ -12,34 +12,33 @@ const users = {};
 io.on('connection', (socket) => {
            console.log('A user has Connected');
 
-           users[socket.id] = { status: 'available' };
+           users[socket.id] = { status: 'online' };
 
            socket.on('disconnect', () => {
-                      console.log('User disconnected');
-                      if (users[socket.id].status === 'in-chat') {
-                                 // Notify the other user that the chat has ended
+                      if (users[socket.id].status === 'in-chat' && users[socket.id].chatPartner) {
+                                 // Notify the other user that the chat has ended.
                                  io.to(users[socket.id].chatPartner).emit('end-call');
-                                 users[socket.id].status = 'available';
-                                 users[users[socket.id].chatPartner].status = 'available';
+                                 users[socket.id].status = 'online';
+                                 users[users[socket.id].chatPartner].status = 'online';
                       }
                       delete users[socket.id];
            });
 
            socket.on('start-chat', (data) => {
-                      console.log(`User ${socket.id} started a chat`);
-
                       // Find an available user to start a chat
                       const availableUsers = Object.keys(users).filter(
-                                 (userId) => users[userId].status === 'available' && userId !== socket.id
+                                 (userId) => users[userId].status === 'in-queue' && userId !== socket.id
                       );
+
                       if (availableUsers.length > 0) {
-                                 console.log('Haji aap ka connection hojayega')
-                                 const partnerId = availableUsers[Math.floor(Math.random() * availableUsers.length)];
+                                 console.log('Haji aap ka connection hojayega');
+                                 const partnerId = availableUsers[
+                                            Math.floor(Math.random() * availableUsers.length)];
                                  // Update user statuses to 'in-chat'
                                  users[socket.id].status = 'in-chat';
                                  users[partnerId].status = 'in-chat';
 
-                                 // Store partner information
+                                 // Store partner information.
                                  users[socket.id].chatPartner = partnerId;
                                  users[partnerId].chatPartner = socket.id;
 
@@ -47,8 +46,9 @@ io.on('connection', (socket) => {
                                  io.to(socket.id).emit('start-chat');
                                  io.to(partnerId).emit('start-chat');
                       } else {
-                                 console.log('No users are available to chat at the moment');
-                                 io.to(socket.id).emit('no-available-users');
+                                 console.log('Waiting for a match');
+                                 users[socket.id].status = 'in-queue';
+                                 io.to(socket.id).emit('waiting-for-match');
                       }
            });
 
